@@ -1,0 +1,1 @@
+[09-Jan-2023 19:39:13 UTC] PHP Fatal error:  Cannot declare class App\Models\Product, because the name is already in use in /home/cecilio/projects/artisan_frontend/artisan_backend/app/Models/Additional.php on line 8
