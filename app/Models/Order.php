@@ -8,8 +8,13 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'customer_guest',
+        'user_id',
+        'lines',
+        'items_qty',
         'user_data',
         'total',
+        'total_items',
         'total_discount',
         'total_tax',
         'total_delivery',
@@ -18,9 +23,21 @@ class Order extends Model
         'coupon_id',
         'coupon_discount',
         'total_tip',
+        'status',
+        'store_status',
+        'payment_status',
     ];
-    /*public function additionals()
+    public function scopeWithEmailAndCoupon($query, $email, $coupon_id){
+        $query->where('user_data', 'LIKE', '%' . $email . '%')
+            ->where('coupon_id', $coupon_id);
+        return $query;
+    }
+    public function scopeOfEmail($query, $email){
+        $query->where('user_data', 'LIKE', '%' . $email . '%');
+        return $query;
+    }
+    public function items()
     {
-        return $this->hasManyThrough(Additional::class, ProductsAdditionals::class,'product_id', 'id', 'id', 'additional_id');
-    }*/
+        return $this->hasMany(OrderProduct::class);
+    }
 }
