@@ -19,6 +19,7 @@ class OrderProduct extends Model
         'total_discount',
         'total_additionals',
         'additionals',
+        'comments'
     ];
     
 }

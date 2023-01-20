@@ -23,7 +23,7 @@ class CreateOrdersProductsTable extends Migration
             $table->unsignedDecimal('total_discount', 8, 2);
             $table->unsignedDecimal('total_additionals', 8, 2);
             $table->json('additionals')->default(new Expression('(JSON_ARRAY())'));
-            
+            $table->text('comments');
         });
     }
 

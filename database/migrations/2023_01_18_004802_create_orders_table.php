@@ -40,8 +40,9 @@ class CreateOrdersTable extends Migration
                 'done',
                 'delivering',
                 'delivered',
-                ])->default('waiting');
+            ])->default('waiting');
             $table->enum('payment_status', [0,1,2])->default(0);
+            $table->text('comments');
             $table->timestamps();
         });
     }

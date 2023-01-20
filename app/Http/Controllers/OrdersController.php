@@ -58,6 +58,7 @@ class OrdersController extends Controller
             $coupon_code = $request->json()->get("coupon_code");
             $payment_method = $request->json()->get("payment_method");
             $delivery_address = $request->json()->get("delivery_address");
+            $comments = $request->json()->get("general_comments");
             $order_data = $this->PreFetchOrderFromItems($items_request);
             $error = 0;
             //dd($order_data);
@@ -87,6 +88,7 @@ class OrdersController extends Controller
             $order_data['user_data'] = json_encode($user);
             $order_data['delivery_address'] = json_encode($delivery_address);
             $order_data['payment_method'] = $payment_method;
+            $order_data['comments'] = empty($comments) ? '' : $comments;
             if(is_numeric($tip_amount)){
                 $order_data['total_tip'] = $tip_amount;
                 $order_data['total'] += $tip_amount;

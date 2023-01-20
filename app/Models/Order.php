@@ -26,6 +26,7 @@ class Order extends Model
         'status',
         'store_status',
         'payment_status',
+        'comments',
     ];
     public function scopeWithEmailAndCoupon($query, $email, $coupon_id){
         $query->where('user_data', 'LIKE', '%' . $email . '%')
