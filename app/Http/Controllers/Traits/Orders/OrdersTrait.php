@@ -6,35 +6,10 @@ use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
 trait OrdersTrait {
-    private function validateCouponCode($coupon_code, $user_email, $order_amount){
-        if($coupon = Coupon::codeActive($coupon_code)->first()){
-            //dd($coupon, $order_amount);
-            if($coupon->user_behavior == 1 && Order::withEmailAndCoupon($user_email, $coupon->id)->count() > 0){
-                return 11;
-            }
-            if($coupon->available_to == 2 && Order::ofEmail($user_email)->count() > 0){
-                return 12;
-            }
-            if($coupon->max_coupons > 0 && Order::where('coupon_id', $coupon->id)->count() > $coupon->max_coupons){
-                return 14;
-            }
-            if($coupon->minimum_purchase > 0 && $order_amount < $coupon->minimum_purchase){
-                return 15;
-            }
-            return [
-                'id' => $coupon->id,
-                'amount' => $coupon->amount,
-                'discount_type' => $coupon->discount_type,
-            ];
-        }
-        return 10;
-    }
     private function applyCouponCode(&$order_data, $coupon){
         $order_data['coupon_id'] = $coupon['id'];
         //$coupon['discount_type'] 1:percentage, 2:fixed_amount
-        $order_data['coupon_discount'] = $coupon['discount_type'] == '1' ? 
-                                        ($order_data['total'] * ($coupon['amount'] / 100)) : 
-                                        $coupon['amount'];
+        $order_data['coupon_discount'] = $coupon['discount_amount'];
         $order_data['total'] -= $order_data['coupon_discount'];
     }
     private function FetchOrderAddtionals($additionals){

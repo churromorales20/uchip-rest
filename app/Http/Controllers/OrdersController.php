@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Traits\Orders\OrdersTrait;
 use App\Helpers\OrdersHelper;
+use App\Helpers\CouponsHelper;
 class OrdersController extends Controller
 {
     use OrdersTrait;
@@ -25,6 +26,29 @@ class OrdersController extends Controller
                 ]
             ]
         ]);
+    }
+    public function PreCheck(Request $request){
+        sleep(2);
+        return response()->json([
+            'status'=>'success',
+        ]);
+    }
+    public function CouponCheck(Request $request){
+        $coupon_code = $request->input('coupon_code');
+        $user_email = $request->input('user_email');
+        $order_total = $request->input('order_total');
+        $coupon = CouponsHelper::ValidateCouponCode($coupon_code, $user_email, $order_total);
+        if(!is_array($coupon) || isset($coupon['error_code'])){
+            return response()->json([
+                'status'=>'error', 
+                'code' => !is_array($coupon) ? 0 : $coupon['error_code']
+            ]);
+        }else{
+            return response()->json([
+                'status'=>'success',
+                'discount_amount'=> $coupon['discount_amount'],
+            ]);
+        }
     }
     public function Create(Request $request){
         if(OrdersHelper::CurentlyAccepting()){  
@@ -48,12 +72,11 @@ class OrdersController extends Controller
             if(!empty($coupon_code)){
                 //UNCOMMENT IN THE FUTURE
                 //$coupon = $this->validateCouponCode($coupon_code, $customer->email,$order_data['total']);
-                $coupon = $this->validateCouponCode($coupon_code, $user['email'],$order_data['total']);
-                if(is_numeric($coupon)){
-                    dd($coupon);
+                $coupon = CouponsHelper::ValidateCouponCode($coupon_code, $user['email'],$order_data['total']);
+                if(!is_array($coupon) || isset($coupon['error_code'])){
                     return response()->json([
                         'status'=>'error', 
-                        'code' => $coupon
+                        'code' => !is_array($coupon) ? 0 : $coupon['error_code']
                     ]);
                 }else{
                     $this->applyCouponCode($order_data, $coupon);

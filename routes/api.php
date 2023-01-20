@@ -25,3 +25,5 @@ Route::get('/addresses/autocomplete', [App\Http\Controllers\GoogleMapsController
 Route::get('/addresses/place/info', [App\Http\Controllers\GoogleMapsController::class, 'PlaceInformation']);
 Route::get('/orders/config', [App\Http\Controllers\OrdersController::class, 'GetConfiguration']);
 Route::post('/order/create', [App\Http\Controllers\OrdersController::class, 'Create']);
+Route::post('/order/check', [App\Http\Controllers\OrdersController::class, 'PreCheck']);
+Route::get('/order/coupon/check', [App\Http\Controllers\OrdersController::class, 'CouponCheck']);
