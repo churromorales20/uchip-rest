@@ -22,6 +22,6 @@ class Product extends Model
         return $this->hasManyThrough(Additional::class, ProductsAdditionals::class,'product_id', 'id', 'id', 'additional_id');
     }
     public function getPriceDiscountAttribute($value){
-        return floatval($value);
+        return $value === null ? null : floatval($value);
     }
 }

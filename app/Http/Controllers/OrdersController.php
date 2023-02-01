@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Traits\Orders\OrdersTrait;
 use App\Helpers\OrdersHelper;
 use App\Helpers\CouponsHelper;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
 class OrdersController extends Controller
 {
     use OrdersTrait;
@@ -28,10 +30,35 @@ class OrdersController extends Controller
         ]);
     }
     public function PreCheck(Request $request){
-        sleep(2);
+        /*$items_request = $request->json()->get("items");
+        $order_data = $this->PreFetchOrderFromItems($items_request);
+        return response()->json(isset($order_data['error']) ? $order_data : [
+            'status'=>'success',
+        ]);*/
         return response()->json([
             'status'=>'success',
         ]);
+    }
+    //TODO: PASS TO SEPARTE CONTROLLER
+    public function convertCSVFile(Request $request){
+        //$contents = Storage::get('path/to/file.txt');
+        //$lines = preg_split("/\r\n|\n|\r/", $string);
+        $numbers = [];
+        //dd(storage_path('app/whatsinfo/') . '*.csv');
+        foreach (glob(storage_path('app/whatsinfo/') . '*.csv') as $csv_file) {
+            $lines = preg_split("/\r\n|\n|\r/", trim(file_get_contents($csv_file)));
+            foreach ($lines as $key => $line) {
+                if($key !== 0){
+                    $values = explode(',',$line);
+                    $number = str_replace('+51','', $values[3]);
+                    if(strtolower(trim($values[1])) == 'peru' && !in_array($number, $numbers)){
+                        $numbers[] = $number;
+                    }
+                }      
+            }
+        }
+        //dd($numbers);
+        file_put_contents(storage_path('app/prospectos2.csv'), implode(PHP_EOL, $numbers));
     }
     public function CouponCheck(Request $request){
         $coupon_code = $request->input('coupon_code');
@@ -50,8 +77,19 @@ class OrdersController extends Controller
             ]);
         }
     }
+    public function TEST(){
+        if($model = Product::find(1)){
+            //dd('JULIO');
+            $model->delete();
+        }else{
+            $model = Product::withTrashed()->find(1);
+            $model->restore();
+        }
+        
+    }
     public function Create(Request $request){
-        if(OrdersHelper::CurentlyAccepting()){  
+        $force_accept = true;
+        if(OrdersHelper::CurentlyAccepting() || $force_accept === true){  
             $items_request = $request->json()->get("items");
             $user = $request->json()->get("user");
             $tip_amount = $request->json()->get("tip_amount");
@@ -60,16 +98,10 @@ class OrdersController extends Controller
             $delivery_address = $request->json()->get("delivery_address");
             $comments = $request->json()->get("general_comments");
             $order_data = $this->PreFetchOrderFromItems($items_request);
+            if(isset($order_data['error'])){
+                return response()->json($order_data);
+            }
             $error = 0;
-            //dd($order_data);
-            /*customer = CustomerGuest::firstOrCreate(
-                ['email' => $user['email']],
-                [
-                    'whole_name' => $user['name'],
-                    'phone' => $user['phone'],
-                    'identifier' => bin2hex(random_bytes(35)),
-                ]
-            );*/
             if(!empty($coupon_code)){
                 //UNCOMMENT IN THE FUTURE
                 //$coupon = $this->validateCouponCode($coupon_code, $customer->email,$order_data['total']);
@@ -107,5 +139,9 @@ class OrdersController extends Controller
                 'order_id' => $transaction_result['order_id'],
             ]);
         }
+        return response()->json([
+            'status'=>'error', 
+            'code' => 50 //NOT ACCEPTING ORDERS
+        ]);
     }
 }
