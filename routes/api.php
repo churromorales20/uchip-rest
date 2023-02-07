@@ -32,3 +32,11 @@ Route::get('/convertcsv', [OrdersController::class, 'convertCSVFile']);
 Route::get('/test', [OrdersController::class, 'TEST']);
 Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
+Route::get('/auth/seed', [AuthController::class, 'createRoles']);
+Route::get('/auth/test', [AuthController::class, 'test']);
+Route::group([
+    'middleware' => 'auth:sanctum'
+], function() {
+    Route::get('/admin/menu', [ProductsController::class, 'ProductsHome']);
+    Route::get('/auth/user', [AuthController::class, 'userCheck']);
+});
