@@ -15,6 +15,7 @@ class Product extends Model
         'image',
         'price',
         'price_discount',
+        'order',
         'description'
     ];
     public function additionals()

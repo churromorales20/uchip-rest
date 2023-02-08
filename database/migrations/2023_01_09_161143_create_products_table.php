@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->float('price', 8, 2);
             $table->float('price_discount', 8, 2);
             $table->mediumText('description');
+            $table->unsignedTinyInteger('order')->default(0);
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });

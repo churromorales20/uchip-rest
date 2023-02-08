@@ -17,6 +17,7 @@ class CreateCategoriesTable extends Migration
             $table->smallIncrements('id');
             $table->string('name', 80);
             $table->mediumText('description');
+            $table->unsignedTinyInteger('order')->default(0);
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });

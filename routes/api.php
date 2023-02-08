@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\GoogleMapsController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AdminMenuController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,6 +38,9 @@ Route::get('/auth/test', [AuthController::class, 'test']);
 Route::group([
     'middleware' => 'auth:sanctum'
 ], function() {
-    Route::get('/admin/menu', [ProductsController::class, 'ProductsHome']);
+    Route::get('/admin/menu', [AdminMenuController::class, 'getMenuInformation']);
+    Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
+    Route::post('/admin/menu/categories/changestatus', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/categories/update-order', [AdminMenuController::class, 'changeCategoryStatus']);
     Route::get('/auth/user', [AuthController::class, 'userCheck']);
 });
