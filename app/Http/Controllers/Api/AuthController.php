@@ -25,7 +25,18 @@ class AuthController extends Controller
         //$staff_role->givePermissionTo('orders.*');
     }
     public function test(Request $request){
-        dd(Role::where(['name' => 'admin'])->first()->menues);
+        $closer = INF;
+        $ts = [-15 -7 -9 -14 -12];
+
+        function computeDayGains($nbSeats, array $payingGuests, array $guestMovements) {
+            $counter = 0;
+            for ($i=0; $i < count($arr); $i++) { 
+                if($i >= $n1 && $i <= $n2){
+                    $counter += $arr[$i];
+                }
+            }
+        }
+        dd(countFrequencies(['the','dog','has','has','dog','dog']));
     }
     public function userCheck(Request $request){
        $user = $request->user();

@@ -18,4 +18,9 @@ class Additional extends Model
     public function getSingleAttribute($value) {
         return $value == '1' ? true : false;
     }
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, ProductsAdditionals::class,'additional_id', 'id', 'id', 'product_id');
+    }
 }
+ 

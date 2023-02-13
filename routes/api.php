@@ -39,8 +39,11 @@ Route::group([
     'middleware' => 'auth:sanctum'
 ], function() {
     Route::get('/admin/menu', [AdminMenuController::class, 'getMenuInformation']);
+    Route::get('/admin/menu/additionals', [AdminMenuController::class, 'getAdditionals']);
+    Route::get('/auth/user', [AuthController::class, 'userCheck']);
+
     Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
     Route::post('/admin/menu/categories/changestatus', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/products/additionals', [AdminMenuController::class, 'changeCategoryStatus']);
     Route::post('/admin/menu/categories/update-order', [AdminMenuController::class, 'changeCategoryStatus']);
-    Route::get('/auth/user', [AuthController::class, 'userCheck']);
 });
