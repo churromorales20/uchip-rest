@@ -18,9 +18,17 @@ class ProductsController extends Controller
     }
     public function ProductsHome(Request $request){
         //sleep(4);
-        return response()->json(['status'=>'success', 'home'=> Category::with(['products.additionals.items_data' => function ($query) {
-            $query->orderBy('order', 'asc');
-        }])->get()]);
+        return response()->json([
+            'status'=>'success', 
+            'home'=> Category::with(['products' => function ($query) {
+                        $query->with(['additionals.items_data' => function ($query) {
+                            $query->orderBy('order', 'asc');
+                        }])->orderBy('order', 'asc');
+                    }])
+                    ->has('products')
+                    ->orderBy('order', 'asc')
+                    ->get()
+            ]);
     }
     public function changeProductPrice(Request $request){
         if($product = Product::withTrashed()->where('id', $request->input('product_id'))->first()){

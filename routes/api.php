@@ -44,7 +44,9 @@ Route::group([
     Route::get('/auth/user', [AuthController::class, 'userCheck']);
 
     Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
-    Route::post('/admin/menu/categories/changestatus', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/categories/status/update', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/categories/delete', [AdminMenuController::class, 'deleteCategory']);
+    Route::post('/admin/menu/categories/name/update', [AdminMenuController::class, 'updateCategoryName']);
     Route::post('/admin/menu/products/additionals', [AdminMenuController::class, 'changeCategoryStatus']);
     Route::post('/admin/menu/products/additionals/association', [AdminMenuController::class, 'changeProductAssociation']);
     Route::post('/admin/menu/products/additionals/order', [AdminMenuController::class, 'changeProductAdditionalsOrder']);
@@ -56,7 +58,7 @@ Route::group([
     Route::post('/admin/menu/products/delete', [ProductsController::class, 'delete']);
     Route::post('/admin/menu/products/image/update', [ProductsController::class, 'imageUpdate']);
     Route::post('/admin/menu/categories/products/update-order', [ProductsController::class, 'reorderInCategory']);
-    Route::post('/admin/menu/categories/update-order', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/categories/order/update', [AdminMenuController::class, 'changeCategoryOrder']);
     Route::post('/admin/menu/additionals/options/add', [AdminMenuController::class, 'additionalAddOption']);
     Route::post('/admin/menu/additionals/options/update', [AdminMenuController::class, 'additionalUpdateOption']);
     Route::post('/admin/menu/additionals/options/delete', [AdminMenuController::class, 'additionalDeleteOption']);

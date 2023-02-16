@@ -15,26 +15,63 @@ use DB;
 class AdminMenuController extends Controller
 {
     public function createCategory(Request $request){
-        //sleep(2);
+        $new_order = Category::withTrashed()->max('order') + 1;
+        $category = Category::create([
+            'description' => "",
+            'name' => "Nueva categoria",
+            'order' => $new_order,
+        ]);
+        $category->products = [];
+        //$category->deleted_at = false;
         return response()->json([
             'status' => 'success',
-            'category' => [
-                'created_at' => null,
-                'deleted_at' => null,
-                'description' => "",
-                'id' => 10,
-                'name' => "Nueva categoria",
-                'order' => 7,
-                'products' => [],
-                'updated_at' => null,
-            ]
+            'category' => Category::find($category->id)
         ], 200);
     }
     public function changeCategoryStatus(Request $request){
-        sleep(6);
+        $category_id = $request->input('category_id');
+        if($category = Category::where('id', $category_id)->withTrashed()->first()){
+            $new_status = $request->input('new_status');
+            if($new_status === true){
+                $category->restore();
+            }else{
+                $category->delete();
+            }
+            return response()->json([
+                'status' => 'success',
+            ]);   
+        }
+    }
+    public function updateCategoryName(Request $request){
+        $category_id = $request->input('category_id');
+        if($category = Category::where('id', $category_id)->withTrashed()->first()){
+            $category->name = $request->input('new_name');
+            $category->save();
+            return response()->json([
+                'status' => 'success',
+            ]);   
+        }
+    }
+    public function changeCategoryOrder(Request $request){
+        $new_order_map = $request->input('new_order_map');
+        DB::transaction(function() use ($new_order_map){
+            foreach ($new_order_map as $option) {
+                Category::where('id', $option['id'])->withTrashed()->update(['order' => $option['order']]);
+            }
+        });
         return response()->json([
             'status' => 'success',
         ]);
+    }
+    public function deleteCategory(Request $request){
+        $category_id = $request->input('category_id');
+        if($category = Category::where('id', $category_id)->withTrashed()->first()){
+            $category->forceDelete();
+            return response()->json([
+                'status' => 'success',
+            ]);
+        }
+        abort(404);
     }
     public function additionalDeleteOption(Request $request){
         if($option = AdditionalOption::where('id', $request->input('id'))->withTrashed()->first()){
