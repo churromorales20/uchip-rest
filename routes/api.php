@@ -35,6 +35,7 @@ Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
 Route::get('/auth/seed', [AuthController::class, 'createRoles']);
 Route::get('/auth/test', [AuthController::class, 'test']);
+Route::get('/admin/menu/hello', [AdminMenuController::class, 'getMenuInformation']);
 Route::group([
     'middleware' => 'auth:sanctum'
 ], function() {
@@ -45,5 +46,26 @@ Route::group([
     Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
     Route::post('/admin/menu/categories/changestatus', [AdminMenuController::class, 'changeCategoryStatus']);
     Route::post('/admin/menu/products/additionals', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/products/additionals/association', [AdminMenuController::class, 'changeProductAssociation']);
+    Route::post('/admin/menu/products/additionals/order', [AdminMenuController::class, 'changeProductAdditionalsOrder']);
+    Route::post('/admin/menu/products/price/update', [ProductsController::class, 'changeProductPrice']);
+    Route::post('/admin/menu/products/info/update', [ProductsController::class, 'changeProductInfo']);
+    Route::post('/admin/menu/products/status/update', [ProductsController::class, 'changeProductStatus']);
+    Route::post('/admin/menu/products/duplicate', [ProductsController::class, 'duplicate']);
+    Route::post('/admin/menu/products/create', [ProductsController::class, 'create']);
+    Route::post('/admin/menu/products/delete', [ProductsController::class, 'delete']);
+    Route::post('/admin/menu/products/image/update', [ProductsController::class, 'imageUpdate']);
+    Route::post('/admin/menu/categories/products/update-order', [ProductsController::class, 'reorderInCategory']);
     Route::post('/admin/menu/categories/update-order', [AdminMenuController::class, 'changeCategoryStatus']);
+    Route::post('/admin/menu/additionals/options/add', [AdminMenuController::class, 'additionalAddOption']);
+    Route::post('/admin/menu/additionals/options/update', [AdminMenuController::class, 'additionalUpdateOption']);
+    Route::post('/admin/menu/additionals/options/delete', [AdminMenuController::class, 'additionalDeleteOption']);
+    Route::post('/admin/menu/additionals/options/order', [AdminMenuController::class, 'additionalOptionsReorder']);
+    //Route::post('/admin/menu/additionals/delete', [AdminMenuController::class, 'additionalUpdateOption']);
+    Route::post('/admin/menu/additionals/update/quantity', [AdminMenuController::class, 'additionalUpdateQty']);
+    Route::post('/admin/menu/additionals/update/behavior', [AdminMenuController::class, 'additionalUpdateBehavior']);
+    Route::post('/admin/menu/additionals/update/name', [AdminMenuController::class, 'additionalUpdateName']);
+    Route::get('/admin/menu/additionals/create', [AdminMenuController::class, 'additionalAutoCreate']);
+    Route::post('/admin/menu/additionals/delete', [AdminMenuController::class, 'additionalDelete']);
+    Route::post('/admin/menu/additionals/duplicate', [AdminMenuController::class, 'additionalDuplicate']);
 });

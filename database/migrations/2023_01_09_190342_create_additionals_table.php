@@ -15,13 +15,13 @@ class CreateAdditionalsTable extends Migration
     public function up()
     {
         Schema::create('additionals', function (Blueprint $table) {
-            $table->smallIncrements('id');
+            $table->id();
             $table->string('name', 80);
             $table->enum('single', [0, 1])->default(1);
             $table->enum('required', [0, 1])->default(0);
             $table->smallInteger('max_items')->default(1);
             $table->smallInteger('min_items')->default(0);
-            $table->json('items_data')->default(new Expression('(JSON_ARRAY())'));
+            //$table->json('items_data')->default(new Expression('(JSON_ARRAY())'));
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });

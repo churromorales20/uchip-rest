@@ -14,10 +14,12 @@ class CreateProductsAdditionalsTable extends Migration
     public function up()
     {
         Schema::create('products_additionals', function (Blueprint $table) {
-           $table->smallInteger('product_id');
-           $table->smallInteger('additional_id');
+           $table->unsignedBigInteger('product_id');
+           $table->unsignedBigInteger('additional_id');
            $table->smallInteger('order')->defaultValue(0);
            $table->unique(['product_id', 'additional_id']);
+           $table->foreign('additional_id')->references('id')->on('additionals')->onDelete('cascade');
+           $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 

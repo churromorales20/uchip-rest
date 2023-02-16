@@ -9,14 +9,21 @@ class Additional extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $casts = [
-        'items_data' => 'array',
-    ]; 
+    protected $fillable = [
+        'name',
+        'single' ,
+        'required',
+        'max_items',
+        'min_items',
+    ];
     public function getRequiredAttribute($value) {
         return $value == '1' ? true : false;
     }
     public function getSingleAttribute($value) {
         return $value == '1' ? true : false;
+    }
+    public function items_data() {
+        return $this->hasMany(AdditionalOption::class, 'additional_category', 'id');
     }
     public function products()
     {

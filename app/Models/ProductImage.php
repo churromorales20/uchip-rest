@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class ProductsAdditionals extends Model
+class ProductImage extends Model
 {
+    use HasFactory;
+    use SoftDeletes;
+    protected $table = 'images_bucket';
     protected $fillable = [
+        'image_key',
         'product_id',
-        'additional_id',
-        'order',
-    ]; 
-    public $timestamps = false;  
+        'base_64',
+    ];
 }
