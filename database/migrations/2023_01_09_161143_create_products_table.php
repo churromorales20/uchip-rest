@@ -16,7 +16,7 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
-            $table->smallInteger('category_id');
+            $table->unsignedBigInteger('category_id');
             $table->string('image', 50)->nullable();
             $table->float('price', 8, 2);
             $table->float('price_discount', 8, 2)->nullable();
@@ -24,6 +24,7 @@ class CreateProductsTable extends Migration
             $table->unsignedTinyInteger('order')->default(0);
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

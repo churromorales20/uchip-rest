@@ -25,7 +25,13 @@ class AdminMenuController extends Controller
         //$category->deleted_at = false;
         return response()->json([
             'status' => 'success',
-            'category' => Category::find($category->id)
+            'category' => Category::with(['products' => function ($query) {
+                        $query->withTrashed()->with(['additionals' => function($query){
+                            $query->with('items_data')->withTrashed();
+                        }]);
+                    }])
+                    ->where('id', $category->id)
+                    ->first()
         ], 200);
     }
     public function changeCategoryStatus(Request $request){
