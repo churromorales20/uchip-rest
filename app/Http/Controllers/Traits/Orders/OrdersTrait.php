@@ -72,7 +72,7 @@ trait OrdersTrait {
                 $order_items[] = [
                     'unit_price' => $sell_price,
                     'product_id' => $item['id'],
-                    'comments' => $item['comments'],
+                    'comments' => empty($item['comments']) ? '' : $item['comments'],
                     'qty' => $item['qty'],
                     'total_sell' => $total_item_base + $additionals['total'],
                     'total_item' => $total_item_base,

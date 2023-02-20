@@ -184,7 +184,10 @@ class AdminMenuController extends Controller
         $additional->items_data = [];
         return response()->json([
             'status' => 'success',
-            'category' => $additional
+            'category' => Additional::where('id', $additional->id)
+                                    ->with('products')
+                                    ->with('items_data')
+                                    ->first()
         ]);
     }
     public function additionalUpdateBehavior(Request $request){

@@ -16,6 +16,7 @@ class Order extends Model
         'total',
         'total_items',
         'total_discount',
+        'total_additionals',
         'total_tax',
         'total_delivery',
         'delivery_address',
@@ -35,6 +36,10 @@ class Order extends Model
     }
     public function scopeOfEmail($query, $email){
         $query->where('user_data', 'LIKE', '%' . $email . '%');
+        return $query;
+    }
+    public function live($query){
+        $query->whereDate('created_at', today());
         return $query;
     }
     public function items()

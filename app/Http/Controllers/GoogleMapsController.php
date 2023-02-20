@@ -10,7 +10,7 @@ class GoogleMapsController extends Controller
     private $google_api = "https://maps.googleapis.com/maps/api/";
     private $google_api_key;
     public function __construct(){
-        $this->$google_api_key = env('GOOGLE_API_KEY');
+        $this->google_api_key = getenv('GOOGLE_API_KEY');
     }
     private function generateSession(){
         return bin2hex(random_bytes(8));
