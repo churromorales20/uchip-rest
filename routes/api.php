@@ -8,6 +8,8 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AdminMenuController;
 use App\Http\Controllers\Api\AdminOrdersController;
+use App\Http\Controllers\Api\BroadcastAuthController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,7 +24,7 @@ use App\Http\Controllers\Api\AdminOrdersController;
 /*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });*/
-
+Broadcast::routes(['middleware' => 'auth:sanctum']);
 Route::get('/products/home', [ProductsController::class, 'ProductsHome']);
 Route::get('/addresses/autocomplete', [GoogleMapsController::class, 'AddressAutocomplete']);
 Route::get('/addresses/place/info', [GoogleMapsController::class, 'PlaceInformation']);
@@ -36,16 +38,18 @@ Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
 Route::get('/auth/seed', [AuthController::class, 'createRoles']);
 Route::get('/auth/test', [AuthController::class, 'test']);
-Route::get('/admin/menu/hello', [AdminMenuController::class, 'getMenuInformation']);
+//Route::get('/admin/menu/hello', [AdminMenuController::class, 'getMenuInformation']);
 Route::group([
     'middleware' => 'auth:sanctum'
 ], function() {
+    //Route::post('/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
     Route::get('/admin/menu', [AdminMenuController::class, 'getMenuInformation']);
     Route::get('/admin/menu/additionals', [AdminMenuController::class, 'getAdditionals']);
     Route::get('/auth/user', [AuthController::class, 'userCheck']);
 
     Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
     Route::get('/admin/orders/live', [AdminOrdersController::class, 'getLiveOrders']);
+    Route::post('/admin/orders/status/change', [AdminOrdersController::class, 'changeOrderStatus']);
     Route::post('/admin/menu/categories/status/update', [AdminMenuController::class, 'changeCategoryStatus']);
     Route::post('/admin/menu/categories/delete', [AdminMenuController::class, 'deleteCategory']);
     Route::post('/admin/menu/categories/name/update', [AdminMenuController::class, 'updateCategoryName']);

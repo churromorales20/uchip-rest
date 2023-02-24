@@ -108,7 +108,14 @@ trait OrdersTrait {
             $order->items()->createMany($order_data['items']);
             DB::commit();
             return [
-                'order_id' => $order->id
+                'order_id' => $order->id,
+                'order_rendered' => json_decode(json_encode(Order::where('id', $order->id)
+                                                            ->with('products')
+                                                            ->first()
+                                                            ->append([
+                                                                'time_created_at',
+                                                                'formatted_created_at'
+                                                            ])))
             ];
         }catch (Exception $e) {
             DB::rollback();

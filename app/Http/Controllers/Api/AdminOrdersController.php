@@ -4,17 +4,48 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use App\Http\Controllers\Traits\Orders\OrdersTrait;
+use App\Http\Controllers\Traits\Orders\OrdersLiveTrait;
 use App\Helpers\OrdersHelper;
 use App\Helpers\CouponsHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use Faker\Factory;
+use App\Models\Order;
+use App\Events\OrderUpdated;
 class AdminOrdersController extends Controller
 {
-    //use OrdersTrait;
+    use OrdersLiveTrait;
+    public function changeOrderStatus(Request $request){
+        $change = $request->json()->get("change");
+        sleep(4);
+        switch ($change['type']) {
+            case 'order_status':
+                $status_col = 'status';
+                $status_val = $change['status'];
+                break;
+            case 'payment_status':
+                $status_col = 'payment_status';
+                $status_val = $change['status'];
+                break;
+            case 'store_status':
+                $status_col = 'store_status';
+                $status_val = $change['status'];
+                break;
+        }
+        if(isset($status_col)){
+            $order_id = $request->json()->get("id");
+            Order::where('id', $order_id)->update([$status_col => $status_val]);
+            OrderUpdated::dispatch($order_id, $change);
+            return response()->json([
+                'status'=>'success', 
+            ]);
+        }
+        return response()->json([
+            'status'=>'error', 
+        ]);
+    }
     public function getLiveOrders(Request $request){
-        $orders = [];
+        /*$orders = [];
         $faker = Factory::create();
         $status_order = ['pending', 'accepted', 'ended', 'rejected'];
         $payment_methods = ['Efectivo', 'Plin', 'Yape', 'Transferencia'];
@@ -55,7 +86,12 @@ class AdminOrdersController extends Controller
                     "phone"=> $faker->phoneNumber
                 ],
                 'items_qty' => $total_qty,
-                'total' => 34,
+                'total' => $faker->randomFloat(2, 16, 60),
+                'total_items' => $faker->randomFloat(2, 12, 45),
+                'total_discount' => $faker->randomFloat(2, 0, 8),
+                'total_additionals' => $faker->randomFloat(2, 0, 12),
+                'total_delivery' => $faker->randomFloat(2, 0, 16),
+                'total_tip' => rand(0,8),
                 'delivery_address' => [
                     "text" => $faker->address, 
                 ],
@@ -68,7 +104,10 @@ class AdminOrdersController extends Controller
                 'created_at' => $created_at,
             ];
         }
-        //sleep(6);
+        //sleep(6);*/
+
+        $orders = $this->getLive();
+        //print_r($orders); die;
         return response()->json([
             'status'=>'success', 
             'orders' => $orders

@@ -9,6 +9,8 @@ use App\Helpers\OrdersHelper;
 use App\Helpers\CouponsHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
+use App\Events\NewAdminNotification;
+use App\Events\OrderLive;
 class OrdersController extends Controller
 {
     use OrdersTrait;
@@ -133,7 +135,13 @@ class OrdersController extends Controller
                     'code' => 16
                 ]);
             }
-            
+            NewAdminNotification::dispatch([
+                'customer' => $user['name'],
+                'order_total' => $order_data['total'],
+                'id' => $transaction_result['order_id'],
+                'items_qty' => $order_data['items_qty'],
+            ], 'new_order');
+            OrderLive::dispatch(OrdersHelper::renderAdminOrder($transaction_result['order_rendered']), 'new_order');
             return response()->json([
                 'status'=>'success', 
                 'order_id' => $transaction_result['order_id'],

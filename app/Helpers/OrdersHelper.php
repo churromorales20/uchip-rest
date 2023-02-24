@@ -29,6 +29,34 @@ class OrdersHelper
     public static function CurentlyAccepting(){
         return self::IsJobTime() && self::DeliveryActive();
     }
+    private static function addLeadingZeros($number, $n) {
+        $numberStr = (string) $number;
+        $numberLength = strlen($numberStr);
+        
+        if ($numberLength >= $n) {
+            return $numberStr;
+        } else {
+            $numberOfZeros = $n - $numberLength;
+            $zeros = str_repeat('0', $numberOfZeros);
+            return $zeros . $numberStr;
+        }
+    }
+    public static function renderAdminOrder($order){
+        
+        $order->products = array_map(function($pr){
+            $product = $pr->pivot;
+            $product->name = $pr->name;
+            $product->unit_price = floatval($product->unit_price);
+            $product->total_sell = floatval($product->total_sell);
+            $product->total_item = floatval($product->total_item);
+            $product->total_discount = floatval($product->total_discount);
+            $product->total_additionals = floatval($product->total_additionals);
+            $product->additionals = json_decode($product->additionals);
+            return $product;
+        }, $order->products);
+        $order->locator = 'WA-' . self::addLeadingZeros($order->id, 8);
+        return $order;
+    }
 }
 
 ?>
