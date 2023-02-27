@@ -105,10 +105,29 @@ class Order extends Model
     public function getTimeCreatedAtAttribute(){
         return $this->created_at->timestamp;
     }
+    public function getLocatorAttribute(){
+        return 'WA-' . $this->addLeadingZeros($this->id, 8);
+    }
+    public function userOrderIdentifier()
+    {
+        return $this->hasOne(UserOrderIdentifier::class);
+    }
     public function scopeGetLiveItems($query){
         $query->whereDate('created_at', today())
               ->with('products')
               ->orderBy('id', 'asc');
         return $query;
     }
+    private function addLeadingZeros($number, $n) {
+        $numberStr = (string) $number;
+        $numberLength = strlen($numberStr);
+        
+        if ($numberLength >= $n) {
+            return $numberStr;
+        } else {
+            $numberOfZeros = $n - $numberLength;
+            $zeros = str_repeat('0', $numberOfZeros);
+            return $zeros . $numberStr;
+        }
+    } 
 }

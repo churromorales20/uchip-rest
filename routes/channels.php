@@ -22,3 +22,6 @@ Broadcast::channel('admin-notifications', function ($user) {
 Broadcast::channel('admin-orders-live', function ($user) {
     return true;
 });
+Broadcast::channel('orders-live-{id}', function ($id) {
+    return true;
+});

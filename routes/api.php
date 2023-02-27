@@ -29,6 +29,7 @@ Route::get('/products/home', [ProductsController::class, 'ProductsHome']);
 Route::get('/addresses/autocomplete', [GoogleMapsController::class, 'AddressAutocomplete']);
 Route::get('/addresses/place/info', [GoogleMapsController::class, 'PlaceInformation']);
 Route::get('/orders/config', [OrdersController::class, 'GetConfiguration']);
+Route::get('/orders/active', [OrdersController::class, 'GetActiveOrders']);
 Route::post('/order/create', [OrdersController::class, 'Create']);
 Route::post('/order/check', [OrdersController::class, 'PreCheck']);
 Route::get('/order/coupon/check', [OrdersController::class, 'CouponCheck']);

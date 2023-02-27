@@ -18,6 +18,7 @@ trait OrdersLiveTrait {
                                     ->get()
                                     ->append([
                                         'time_created_at',
+                                        'locator',
                                         'formatted_created_at'
                                     ])
                                     ->toArray()

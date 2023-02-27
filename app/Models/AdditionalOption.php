@@ -20,6 +20,9 @@ class AdditionalOption extends Model
         'deleted_at',
         'order'
     ];
+    public function getPriceAttribute($value){
+        return floatval($value);
+    }
     public function getActiveAttribute(){
         return $this->deleted_at === null;
     }

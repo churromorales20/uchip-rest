@@ -35,7 +35,7 @@ class OrderUpdated  implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('admin-orders-live');
+        //return new PrivateChannel('admin-orders-live');
         return [
             new PrivateChannel('admin-orders-live'),
             new Channel('orders-live-' . $this->order_id),

@@ -62,12 +62,13 @@ trait OrdersTrait {
                 $total_item_normal = $item['product']['price'] * $item['qty'];
                 //$total_item_discount = ($total_item_normal) - $total_item_base;
                 //$additionals['total'] = 0;
-                $order_total_items += $sell_price;
+                $order_total_items += $total_item_base;
                 $additionals = $this->FetchOrderAddtionals($item['additionals']);
                 //dd($total_item_base, $sell_price, $item['qty']);
-                $order_total_additionals += $additionals['total'];
-                $order_total += $total_item_base + $additionals['total'];
-                $order_total_normal += $total_item_normal + $additionals['total'];
+                $qtyaddtotal = $additionals['total'] * $item['qty'];
+                $order_total_additionals += $qtyaddtotal;
+                $order_total += $total_item_base + ($qtyaddtotal);
+                $order_total_normal += $total_item_normal + $qtyaddtotal;
                 $items_qty += $item['qty'];
                 $order_items[] = [
                     'unit_price' => $sell_price,
@@ -76,8 +77,8 @@ trait OrdersTrait {
                     'qty' => $item['qty'],
                     'total_sell' => $total_item_base + $additionals['total'],
                     'total_item' => $total_item_base,
-                    'total_discount' => $total_item_normal - $total_item_base,
-                    'total_additionals' => $additionals['total'],
+                    'total_discount' => ($total_item_normal - $total_item_base) * $item['qty'],
+                    'total_additionals' => $additionals['total'] * $item['qty'],
                     'additionals' => json_encode($additionals['items'])
                 ];
             }else{
@@ -101,6 +102,21 @@ trait OrdersTrait {
             'unavailables' => $unavailables
         ];
     }
+    private function GetActiveOrdersFromIdentifier($order_identifier){
+        $orders = Order::whereHas('userOrderIdentifier', function ($query) use ($order_identifier) {
+            $query->where('order_identifier', $order_identifier);
+        })
+        ->whereIn('status', ['pending', 'accepted'])
+        ->with('products')
+        ->get()
+        ->append([
+            'time_created_at',
+            'locator',
+            'formatted_created_at', 
+        ])
+        ->toArray();
+        return json_decode(json_encode($orders));
+    }
     private function InsertOrderTransaction($order_data){
         DB::beginTransaction();
         try {
@@ -114,6 +130,7 @@ trait OrdersTrait {
                                                             ->first()
                                                             ->append([
                                                                 'time_created_at',
+                                                                'locator',
                                                                 'formatted_created_at'
                                                             ])))
             ];

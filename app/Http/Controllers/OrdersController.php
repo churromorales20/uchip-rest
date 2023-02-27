@@ -9,6 +9,7 @@ use App\Helpers\OrdersHelper;
 use App\Helpers\CouponsHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
+use App\Models\UserOrderIdentifier;
 use App\Events\NewAdminNotification;
 use App\Events\OrderLive;
 class OrdersController extends Controller
@@ -39,6 +40,23 @@ class OrdersController extends Controller
         ]);*/
         return response()->json([
             'status'=>'success',
+        ]);
+    }
+    public function GetActiveOrders(Request $request){
+        $order_identifier =  $request->header('OrderIdentifier');
+        $order_identifier = $order_identifier === null ? OrdersHelper::CreateUserOrderIdentifier() : $order_identifier;
+        if(!empty($order_identifier)){
+            $orders = $this->GetActiveOrdersFromIdentifier($order_identifier);
+            return response()->json([
+                'status'=>'success',
+                'actives' => array_map(function($order){
+                                return OrdersHelper::renderAdminOrder($order);
+                            }, $orders)
+            ]);
+        }
+        return response()->json([
+            'status'=>'success',
+            'actives' => []
         ]);
     }
     //TODO: PASS TO SEPARTE CONTROLLER
@@ -135,16 +153,24 @@ class OrdersController extends Controller
                     'code' => 16
                 ]);
             }
+            $order_rendered = OrdersHelper::renderAdminOrder($transaction_result['order_rendered']);
             NewAdminNotification::dispatch([
                 'customer' => $user['name'],
                 'order_total' => $order_data['total'],
                 'id' => $transaction_result['order_id'],
                 'items_qty' => $order_data['items_qty'],
             ], 'new_order');
-            OrderLive::dispatch(OrdersHelper::renderAdminOrder($transaction_result['order_rendered']), 'new_order');
+            OrderLive::dispatch($order_rendered, 'new_order');
+            $order_identifier =  $request->header('OrderIdentifier');
+            $order_identifier = $order_identifier === null ? OrdersHelper::CreateUserOrderIdentifier() : $order_identifier;
+            UserOrderIdentifier::create([
+                'order_identifier' => $order_identifier,
+                'order_id' => $transaction_result['order_id']
+            ]);
             return response()->json([
-                'status'=>'success', 
-                'order_id' => $transaction_result['order_id'],
+                'status' => 'success', 
+                'order_identifier' => $order_identifier,
+                'order_rendered' => $order_rendered,
             ]);
         }
         return response()->json([

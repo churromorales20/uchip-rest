@@ -29,6 +29,9 @@ class OrdersHelper
     public static function CurentlyAccepting(){
         return self::IsJobTime() && self::DeliveryActive();
     }
+    public static function CreateUserOrderIdentifier(){
+        return bin2hex(random_bytes(30));
+    }
     private static function addLeadingZeros($number, $n) {
         $numberStr = (string) $number;
         $numberLength = strlen($numberStr);
@@ -54,7 +57,7 @@ class OrdersHelper
             $product->additionals = json_decode($product->additionals);
             return $product;
         }, $order->products);
-        $order->locator = 'WA-' . self::addLeadingZeros($order->id, 8);
+        //$order->locator = 'WA-' . self::addLeadingZeros($order->id, 8);
         return $order;
     }
 }
