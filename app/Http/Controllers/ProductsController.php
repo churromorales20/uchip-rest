@@ -11,6 +11,7 @@ use App\Models\ProductsAdditionals;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use imagecreatefromstring;
 class ProductsController extends Controller
 {
     public function __construct(){
@@ -109,18 +110,47 @@ class ProductsController extends Controller
         $response->header('Content-Type', 'image/png');
         return $response;
     }
+    private function resizeAndSaveImage($imageData, $filename){
+       $image = imagecreatefromstring(file_get_contents($imageData->getPathname()));
+
+        // Get the original dimensions
+        $originalWidth = imagesx($image);
+        $originalHeight = imagesy($image);
+
+        // Calculate the new dimensions
+        $newWidth = 800;
+        $newHeight = ($newWidth / $originalWidth) * $originalHeight;
+
+        // Create a new image resource with the new dimensions
+        $newImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        // Resize the image to the new dimensions
+        imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+        //return $imageData->getPathname();
+        // Get the resized image data as base64
+        $path = 'app/public/images/' . $filename;
+        $fullPath = storage_path($path);
+        imagepng($newImage, $fullPath);
+    }
     public function imageUpdate(Request $request){
         $product_id = $request->input('product_id');
         if($product = Product::where('id', $product_id)->withTrashed()->first()){
-            $base64_image = $request->input('base64_image');
-            $image_name = DB::transaction(function() use ($product, $base64_image){
+            $image = $request->file('image');
+            $save_image_action = function($image_name) use($image){
+                $this->resizeAndSaveImage($image, $image_name);
+            };
+            //$base64_image = "ssss";
+            //$imageData = $request->file('image');
+            $image_name = DB::transaction(function() use ($product, $save_image_action){
                 $image_name = bin2hex(random_bytes(12));
                 if (Storage::disk('public')->exists("images/{$product->image}")) {
                     Storage::disk('public')->delete("images/{$product->image}");
                 }
                 $product->image = $image_name . '.uchip';
                 $product->save();
-                Storage::disk('public')->putFileAs('images', $base64_image, $image_name);
+                $save_image_action($image_name);
+                //Storage::put('public/images/' . $image_name, $base64_image);
+                //Storage::disk('public')->putFileAs('images', $base64_image, $image_name);
                 return $image_name . '.uchip';
             });
             
@@ -128,7 +158,7 @@ class ProductsController extends Controller
                 'status' => 'success',
                 'category_id' => $product->category_id,
                 'product_id' => $product->id,
-                'image_name' => $image_name
+                'image_name' => $image_name,
             ]);
         }
     }
