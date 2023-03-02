@@ -17,7 +17,6 @@ class AdminOrdersController extends Controller
     use OrdersLiveTrait;
     public function changeOrderStatus(Request $request){
         $change = $request->json()->get("change");
-        sleep(4);
         switch ($change['type']) {
             case 'order_status':
                 $status_col = 'status';
