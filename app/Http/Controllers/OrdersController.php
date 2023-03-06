@@ -154,19 +154,19 @@ class OrdersController extends Controller
                 ]);
             }
             $order_rendered = OrdersHelper::renderAdminOrder($transaction_result['order_rendered']);
-            /*NewAdminNotification::dispatch([
-                'customer' => $user['name'],
-                'order_total' => $order_data['total'],
-                'id' => $transaction_result['order_id'],
-                'items_qty' => $order_data['items_qty'],
-            ], 'new_order');
-            OrderLive::dispatch($order_rendered, 'new_order');*/
             $order_identifier =  $request->header('OrderIdentifier');
             $order_identifier = $order_identifier === null ? OrdersHelper::CreateUserOrderIdentifier() : $order_identifier;
             UserOrderIdentifier::create([
                 'order_identifier' => $order_identifier,
                 'order_id' => $transaction_result['order_id']
             ]);
+            NewAdminNotification::dispatch([
+                'customer' => $user['name'],
+                'order_total' => $order_data['total'],
+                'id' => $transaction_result['order_id'],
+                'items_qty' => $order_data['items_qty'],
+            ], 'new_order');
+            OrderLive::dispatch($order_rendered, 'new_order');
             return response()->json([
                 'status' => 'success', 
                 'order_identifier' => $order_identifier,
