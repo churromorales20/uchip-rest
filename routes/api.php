@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AdminMenuController;
 use App\Http\Controllers\Api\AdminOrdersController;
 use App\Http\Controllers\Api\BroadcastAuthController;
+use App\Http\Controllers\Api\ConfigurationsController;
+use App\Http\Controllers\Api\MarketingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +30,7 @@ Broadcast::routes(['middleware' => 'auth:sanctum']);
 Route::get('/products/home', [ProductsController::class, 'ProductsHome']);
 Route::get('/addresses/autocomplete', [GoogleMapsController::class, 'AddressAutocomplete']);
 Route::get('/addresses/place/info', [GoogleMapsController::class, 'PlaceInformation']);
-Route::get('/orders/config', [OrdersController::class, 'GetConfiguration']);
+Route::get('/site/configurations', [ConfigurationsController::class, 'GetConfiguration']);
 Route::get('/orders/active', [OrdersController::class, 'GetActiveOrders']);
 Route::post('/order/create', [OrdersController::class, 'Create']);
 Route::post('/order/check', [OrdersController::class, 'PreCheck']);
@@ -47,7 +49,9 @@ Route::group([
     Route::get('/admin/menu', [AdminMenuController::class, 'getMenuInformation']);
     Route::get('/admin/menu/additionals', [AdminMenuController::class, 'getAdditionals']);
     Route::get('/auth/user', [AuthController::class, 'userCheck']);
-
+    Route::get('/marketing/coupons', [MarketingController::class, 'GetCoupons']);
+    Route::post('/marketing/coupons/create', [MarketingController::class, 'CreateCoupon']);
+    Route::post('/marketing/coupons/check', [MarketingController::class, 'CheckCoupon']);
     Route::post('/admin/menu/categories/create', [AdminMenuController::class, 'createCategory']);
     Route::get('/admin/orders/live', [AdminOrdersController::class, 'getLiveOrders']);
     Route::post('/admin/orders/status/change', [AdminOrdersController::class, 'changeOrderStatus']);

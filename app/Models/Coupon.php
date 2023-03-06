@@ -27,9 +27,28 @@ class Coupon extends Model
     {
         return $this->hasMany(Order::class);
     }
+    public function getOrdersQtyAttribute()
+    {
+        return $this->orders()->count();
+    }
+    public function getDiscountTypeAttribute($value)
+    {
+        return (int) $value;
+    }
+    public function getUserBehaviorAttribute($value)
+    {
+        return (int) $value;
+    }
+    public function getAvailableToAttribute($value)
+    {
+        return (int) $value;
+    }
+    public function getMinimumPurchaseAttribute($value)
+    {
+        return floatval($value);
+    }
     public function scopeCodeActive($query, $code){
         $query->where('code', $code)
-            ->where('general_status', 1)
             ->whereDate('valid_from', '<=', Carbon::now())
             ->whereDate('valid_to', '>=', Carbon::now());
         return $query;

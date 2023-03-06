@@ -14,5 +14,5 @@ use App\Http\Controllers\ProductsController;
 */
 Route::get('/admin/menu/products/images/{image}.uchip', [ProductsController::class, 'imageServe']);
 Route::get('/', function () {
-    return view('welcome');
+    phpinfo();
 });

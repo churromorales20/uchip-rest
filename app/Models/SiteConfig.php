@@ -12,10 +12,21 @@ class SiteConfig extends Model
     protected $fillable = [
         'key_config',
         'value',
-        'type',
+        'field_type',
     ];
     public function getValueAttribute($value)
     {
-        return $this->type == '2' ? json_decode($value) : $value;
+        switch ($this->field_type) {
+            case 'json':
+                return json_decode($value);
+                break;
+            case 'boolean':
+                return (int) $value === 1;
+                break;
+            case 'text':
+            default:
+                return $value;
+                break;
+        }
     }
 }
